@@ -30,8 +30,8 @@ Ensure you have the following installed:
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/food-explorer-app.git
-cd food-explorer-app
+git clone https://github.com/Somu050600/node-bites.git
+cd node-bites
 npm install
 npm run dev
 ```
