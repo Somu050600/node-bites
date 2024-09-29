@@ -21,6 +21,7 @@ export const useMealData = () => {
         const data = await fetchCategories();
         setCategories(data.categories.slice(0, 5));
       } catch (error) {
+        alert("Error fetching categories");
         console.error("Error fetching categories:", error);
       } finally {
         setIsLoading(false);
