@@ -25,7 +25,7 @@ const Sidebar: React.FC = () => {
               {tags.map((tag, index) => (
                 <span
                   key={tag + index}
-                  className="border rounded-3xl px-2 py-1 border-purple-900 bg-purple-300"
+                  className="border rounded-3xl px-2 py-1 mr-2 border-purple-900 bg-purple-300"
                 >
                   {tag}
                 </span>

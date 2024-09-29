@@ -22,19 +22,33 @@ import {
 } from "../constants/constants";
 import "@xyflow/react/dist/style.css";
 import Spinner from "./Spinner";
+import CustomNode from "./CustomNode";
+import { getLevel } from "../utils/nodeUtils";
 
 const initialNodes: Node[] = [
   {
-    id: NODE_TYPES.START_NODE,
+    id: NODE_TYPES.START_NODE + "_0_0",
+    type: "customNode",
     data: { label: "Explore" },
     position: { x: 100, y: 300 },
     ...HANDLE_POSITIONS,
   },
 ];
 
+const markerEnd = {
+  type: MarkerType.ArrowClosed,
+};
+
+const nodeType = { customNode: CustomNode };
+
 const NodeGraph: React.FC = () => {
-  const { categories, meals, getMealsByCategory, getMealDetails } =
-    useMealData();
+  const {
+    categories,
+    getMealsByCategory,
+    getMealsByIngredient,
+    getMealDetails,
+    getMealIngredients,
+  } = useMealData();
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>([]);
 
@@ -50,17 +64,21 @@ const NodeGraph: React.FC = () => {
   );
   const onConnect = useCallback(
     (connection: any) =>
-      setEdges((eds) =>
-        addEdge({ ...connection, markerEnd: MarkerType.Arrow }, eds)
-      ),
+      setEdges((eds) => addEdge({ ...connection, markerEnd: markerEnd }, eds)),
     []
   );
 
   const getNewNode = useCallback(
-    (id: string, data: any, position: any): Node => ({
+    (
+      id: string,
+      data: any,
+      position: any,
+      nodeType: string = "customNode"
+    ): Node => ({
       id,
       data,
       position,
+      type: nodeType,
       ...HANDLE_POSITIONS,
     }),
     []
@@ -80,12 +98,15 @@ const NodeGraph: React.FC = () => {
 
   const getLoadingNodes = useCallback(
     (node: Node) => {
+      const level = getLevel(node.id);
+      removeSubtree(level);
+
       // placehoders for loading
       for (let i = 0; i < 5; i++) {
         addNewNode(
           node,
           getNewNode(
-            `${NODE_TYPES.LOADING_NODE}_${i}`,
+            `${NODE_TYPES.LOADING_NODE}_${level + 1}_${i}`,
             {
               label: (
                 <div className="flex items-center justify-center gap-2">
@@ -101,37 +122,62 @@ const NodeGraph: React.FC = () => {
         );
       }
     },
-    [addNewNode, getNewNode]
+    [addNewNode, getNewNode, removeSubtree]
   );
 
   // to remove entire sub-tree nodes
-  const removeSubtree = useCallback((nodeType: string) => {
-    const types = Object.values(NODE_TYPES);
-    const isSubtreeNode = (id: string) =>
-      types.slice(types.indexOf(nodeType)).some((type) => id.includes(type));
-
-    setNodes((nds) => nds.filter((node) => !isSubtreeNode(node.id)));
-    setEdges((eds) => eds.filter((edge) => !isSubtreeNode(edge.id)));
+  const removeSubtree = useCallback((level: number) => {
+    setNodes((nds) => nds.filter((node) => getLevel(node.id) <= level));
+    setEdges((eds) => eds.filter((edge) => getLevel(edge.id) < level));
   }, []);
 
   const handleOptionClick = useCallback(
-    (node: Node) => {
+    async (node: Node) => {
       const { data, id } = node;
-      const [_, index] = id.split("_");
+      const level = getLevel(id);
+
       if (data?.label === MEAL_OPTIONS.VIEW_INGREDIENTS) {
-        return false;
+        getLoadingNodes(node);
+
+        const ingredients = await getMealIngredients(node?.data?.data?.idMeal);
+        removeSubtree(level);
+
+        ingredients?.forEach((ing, i) => {
+          addNewNode(
+            node,
+            getNewNode(
+              `${NODE_TYPES.INGREDIENT_NODE}_${level + 1}_${i}`,
+              {
+                label: ing,
+                data: { ingredient: ing },
+              },
+              {
+                x: node.position.x + NODE_WIDTH,
+                y: node.position.y + i * NODE_HEIGHT - 200,
+              }
+            )
+          );
+        });
+        return;
       } else if (data?.label === MEAL_OPTIONS.VIEW_TAGS) {
         return;
       } else if (data?.label === MEAL_OPTIONS.VIEW_DETAILS) {
-        getMealDetails(meals[+index].idMeal);
+        getMealDetails(data?.data?.idMeal);
         return;
       }
     },
-    [getMealDetails, meals]
+    [
+      addNewNode,
+      getLoadingNodes,
+      getMealDetails,
+      getMealIngredients,
+      getNewNode,
+      removeSubtree,
+    ]
   );
 
   const onNodeClick = async (node: Node) => {
-    const [nodeType, index] = node.id.split("_");
+    const [nodeType, level, index] = node.id.split("_");
 
     switch (nodeType) {
       case NODE_TYPES.START_NODE: {
@@ -139,8 +185,8 @@ const NodeGraph: React.FC = () => {
           addNewNode(
             node,
             getNewNode(
-              `${NODE_TYPES.CATEGORY_NODE}_${i}`,
-              { label: category.strCategory },
+              `${NODE_TYPES.CATEGORY_NODE}_${+level + 1}_${i}`,
+              { label: category.strCategory, data: category },
               { x: node.position.x + NODE_WIDTH, y: (i + 1) * NODE_HEIGHT }
             )
           )
@@ -148,13 +194,13 @@ const NodeGraph: React.FC = () => {
         break;
       }
       case NODE_TYPES.CATEGORY_NODE: {
-        removeSubtree(NODE_TYPES.OPTIONS_NODE_1);
+        removeSubtree(+level);
 
         addNewNode(
           node,
           getNewNode(
-            `${NODE_TYPES.OPTIONS_NODE_1}_${index}`,
-            { label: "View Meals" },
+            `${NODE_TYPES.OPTIONS_NODE_1}_${+level + 1}_${index}`,
+            { label: "View Meals", data: node?.data.data },
             { x: node.position.x + NODE_WIDTH, y: node.position.y }
           )
         );
@@ -163,17 +209,17 @@ const NodeGraph: React.FC = () => {
       case NODE_TYPES.OPTIONS_NODE_1: {
         getLoadingNodes(node);
 
-        const categoryName = categories[+index]?.strCategory;
+        const categoryName = node?.data?.data?.strCategory;
         if (categoryName) {
           const meals = await getMealsByCategory(categoryName);
-          removeSubtree(NODE_TYPES.MEAL_NODE); // to remove loading nodes
+          removeSubtree(+level); // to remove loading nodes
 
           meals?.forEach((meal, idx) =>
             addNewNode(
               node,
               getNewNode(
-                `${NODE_TYPES.MEAL_NODE}_${idx}`,
-                { label: meal.strMeal },
+                `${NODE_TYPES.MEAL_NODE}_${+level + 1}_${idx}`,
+                { label: meal.strMeal, data: meal },
                 {
                   x: node.position.x + NODE_WIDTH,
                   y: node.position.y + idx * NODE_HEIGHT - 200,
@@ -185,13 +231,13 @@ const NodeGraph: React.FC = () => {
         break;
       }
       case NODE_TYPES.MEAL_NODE:
-        removeSubtree(NODE_TYPES.OPTIONS_NODE_2);
+        removeSubtree(+level);
         Object.values(MEAL_OPTIONS)?.forEach((opt, idx) =>
           addNewNode(
             node,
             getNewNode(
-              `${NODE_TYPES.OPTIONS_NODE_2}_${index}_${idx}`,
-              { label: opt },
+              `${NODE_TYPES.OPTIONS_NODE_2}_${+level + 1}_${index}_${idx}`,
+              { label: opt, data: node?.data?.data },
               {
                 x: node.position.x + NODE_WIDTH,
                 y: node.position.y + idx * NODE_HEIGHT - 100,
@@ -204,6 +250,31 @@ const NodeGraph: React.FC = () => {
       case NODE_TYPES.OPTIONS_NODE_2:
         handleOptionClick(node);
         break;
+
+      case NODE_TYPES.INGREDIENT_NODE: {
+        getLoadingNodes(node);
+
+        const ingredient = node?.data?.data?.ingredient;
+        if (ingredient) {
+          const meals = await getMealsByIngredient(ingredient);
+          removeSubtree(+level); // to remove loading nodes
+
+          meals?.forEach((meal, idx) =>
+            addNewNode(
+              node,
+              getNewNode(
+                `${NODE_TYPES.MEAL_NODE}_${+level + 1}_${idx}`,
+                { label: meal.strMeal, data: meal },
+                {
+                  x: node.position.x + NODE_WIDTH,
+                  y: node.position.y + idx * NODE_HEIGHT - 200,
+                }
+              )
+            )
+          );
+        }
+        break;
+      }
     }
   };
 
@@ -212,6 +283,7 @@ const NodeGraph: React.FC = () => {
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        nodeTypes={nodeType}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeClick={(_, node) => onNodeClick(node)}

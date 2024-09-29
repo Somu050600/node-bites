@@ -3,12 +3,13 @@ import {
   fetchCategories,
   fetchMealsByCategory,
   fetchMealDetails,
+  fetchMealsByIngredient,
 } from "../api/mealAPI";
 import { Category, Meal } from "../types/types";
 import { MealContext } from "../context/MealContext";
+import { getIngredients } from "../utils/nodeUtils";
 
 export const useMealData = () => {
-  const [meals, setMeals] = useState<Meal[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { mealDetails, setMealDetails } = useContext(MealContext);
@@ -32,10 +33,21 @@ export const useMealData = () => {
     setIsLoading(true);
     try {
       const data: { meals: Meal[] } = await fetchMealsByCategory(category);
-      setMeals(data.meals.slice(0, 5));
       return data.meals.slice(0, 5);
     } catch (error) {
       console.error("Error fetching meals by category:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getMealsByIngredient = async (ingredient: string) => {
+    setIsLoading(true);
+    try {
+      const data: { meals: Meal[] } = await fetchMealsByIngredient(ingredient);
+      return data.meals.slice(0, 5);
+    } catch (error) {
+      console.error("Error fetching meals by ingredient:", error);
     } finally {
       setIsLoading(false);
     }
@@ -53,12 +65,25 @@ export const useMealData = () => {
     }
   };
 
+  const getMealIngredients = async (mealId: string) => {
+    setIsLoading(true);
+    try {
+      const data = await fetchMealDetails(mealId);
+      return getIngredients(data.meals[0]);
+    } catch (error) {
+      console.error("Error fetching meal ingredients:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     categories,
-    meals,
     mealDetails,
     isLoading,
     getMealsByCategory,
+    getMealsByIngredient,
     getMealDetails,
+    getMealIngredients,
   };
 };
