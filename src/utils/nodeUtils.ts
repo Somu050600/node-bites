@@ -6,15 +6,11 @@ export const getNodeType = (node: NodeProps<CustomNodeProps>) => {
   return Object.values(NODE_TYPES).find((f) => node?.id?.startsWith(f));
 };
 
-export const getIngredients = (details) => {
-  const ingredients = Object.keys(details).reduce((acc, key) => {
-    if (key.startsWith("strIngredient") && details[key]) {
-      acc.push(details[key]);
-    }
+export const getIngredients = (details: Record<string, any>) => {
+  return Object.keys(details).reduce((acc: string[], key: string) => {
+    acc.push(details[key]);
     return acc;
   }, []);
-
-  return ingredients.slice(0, 5);
 };
 
 export const getLevel = (id: string) => {

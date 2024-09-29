@@ -1,3 +1,12 @@
+import { Node as XyflowNode } from "@xyflow/react";
+
+export interface Node extends XyflowNode {
+  data: {
+    label: string;
+    data?: any;
+  };
+}
+
 export type Category = {
   idCategory: string;
   strCategory: string;

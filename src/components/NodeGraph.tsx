@@ -7,7 +7,6 @@ import {
   applyEdgeChanges,
   addEdge,
   MarkerType,
-  Node,
   Edge,
   NodeChange,
   EdgeChange,
@@ -24,6 +23,7 @@ import "@xyflow/react/dist/style.css";
 import Spinner from "./Spinner";
 import CustomNode from "./CustomNode";
 import { getLevel } from "../utils/nodeUtils";
+import { Node } from "../types/types";
 
 const initialNodes: Node[] = [
   {
