@@ -1,50 +1,37 @@
-# React + TypeScript + Vite
+# Food Explorer App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The Food Explorer App is a React-based application that allows users to explore various meal categories, view meals within those categories, and see detailed information about selected meals. The app utilizes a visual node graph to represent the exploration process, making it intuitive and engaging.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Explore Meals:** Start from a central node and navigate through categories and meals.
+- **Visual Node Graph:** Interact with a dynamic node graph representing meal categories and their associated meals.
+- **Meal Details:** View detailed information about individual meals, including ingredients and instructions.
+- **Loading State:** Show loading indicators while fetching data to improve user experience.
 
-## Expanding the ESLint configuration
+## Technologies Used
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **React:** For building the user interface.
+- **TypeScript:** For type safety and better development experience.
+- **React Flow:** For visualizing the node graph.
+- **Context API:** For state management across components.
+- **Vite:** For fast development and build tooling.
+- **Tailwind CSS:** For styling.
 
-- Configure the top-level `parserOptions` property like this:
+## Setup Instructions
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### Prerequisites
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Ensure you have the following installed:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+- Node.js (version 14 or later)
+- npm or yarn
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+### Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/food-explorer-app.git
+cd food-explorer-app
+npm install
+npm run dev
 ```
