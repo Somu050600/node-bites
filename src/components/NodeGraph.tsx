@@ -96,6 +96,12 @@ const NodeGraph: React.FC = () => {
     [onConnect]
   );
 
+  // to remove entire sub-tree nodes
+  const removeSubtree = useCallback((level: number) => {
+    setNodes((nds) => nds.filter((node) => getLevel(node.id) <= level));
+    setEdges((eds) => eds.filter((edge) => getLevel(edge.id) < level));
+  }, []);
+
   const getLoadingNodes = useCallback(
     (node: Node) => {
       const level = getLevel(node.id);
@@ -124,12 +130,6 @@ const NodeGraph: React.FC = () => {
     },
     [addNewNode, getNewNode, removeSubtree]
   );
-
-  // to remove entire sub-tree nodes
-  const removeSubtree = useCallback((level: number) => {
-    setNodes((nds) => nds.filter((node) => getLevel(node.id) <= level));
-    setEdges((eds) => eds.filter((edge) => getLevel(edge.id) < level));
-  }, []);
 
   const handleOptionClick = useCallback(
     async (node: Node) => {
