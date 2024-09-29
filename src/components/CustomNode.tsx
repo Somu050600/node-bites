@@ -24,7 +24,9 @@ const CustomNode: React.FC<NodeProps<CustomNodeProps>> = (props) => {
           </div>
         )}
         <div className="m-0">
-          <div className=" text-xs">{props?.data?.label}</div>
+          <div className=" text-xs overflow-hidden text-ellipsis line-clamp-3">
+            {props?.data?.label}
+          </div>
         </div>
       </div>
 

@@ -69,7 +69,7 @@ export const useMealData = () => {
     setIsLoading(true);
     try {
       const data = await fetchMealDetails(mealId);
-      return getIngredients(data.meals[0]);
+      return getIngredients(data.meals[0]).slice(0, 5);
     } catch (error) {
       console.error("Error fetching meal ingredients:", error);
     } finally {

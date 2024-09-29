@@ -8,7 +8,7 @@ export const getNodeType = (node: NodeProps<CustomNodeProps>) => {
 
 export const getIngredients = (details: Record<string, any>) => {
   return Object.keys(details).reduce((acc: string[], key: string) => {
-    acc.push(details[key]);
+    if (key.startsWith("strIngredient") && details[key]) acc.push(details[key]);
     return acc;
   }, []);
 };
