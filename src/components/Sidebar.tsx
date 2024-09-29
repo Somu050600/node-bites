@@ -6,7 +6,7 @@ const Sidebar: React.FC = () => {
   const tags = mealDetails?.strTags?.split(",");
 
   return (
-    <div className="w-96 flex flex-col gap-3 bg-gray-100 p-3 fixed right-0 top-0 h-full  shadow-lg z-50 overflow-y-auto overflow-x-hidden">
+    <div className="w-96 max-w-[100vw] flex flex-col gap-3 bg-gray-100 p-3 fixed right-0 top-0 h-full shadow-lg drop-shadow-lg z-50 overflow-y-auto overflow-x-hidden">
       <div className="flex flex-row items-center justify-between border-0 border-b border-b-1 border-b-gray-300">
         <h2 className="my-2 text-xl font-medium ">{mealDetails?.strMeal}</h2>
         <button className="text-right text-xl" onClick={() => setMealDetails()}>
@@ -56,7 +56,7 @@ const Sidebar: React.FC = () => {
               {mealDetails?.strSource ?? "-"}
             </a>
           </div>
-          <div className="flex flex-col border rounded p-2 overflow-y-auto overflow-x-hidden">
+          <div className=" min-h-40 flex flex-col border rounded p-2 overflow-y-auto overflow-x-hidden">
             <h3 className="font-bold mb-2">Instructions</h3>
             <p className="text-sm">{mealDetails?.strInstructions}</p>
           </div>

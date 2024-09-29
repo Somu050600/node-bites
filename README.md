@@ -1,4 +1,4 @@
-# Food Explorer App
+# [Food Explorer App &#8599;](https://node-bites.vercel.app/)
 
 The Food Explorer App is a React-based application that allows users to explore various meal categories, view meals within those categories, and see detailed information about selected meals. The app utilizes a visual node graph to represent the exploration process, making it intuitive and engaging.
 

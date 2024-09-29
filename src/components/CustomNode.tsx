@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Handle, Node, NodeProps, Position } from "@xyflow/react";
 import { getNodeType } from "../utils/nodeUtils";
-import { ICONS } from "../constants/constants";
+import { ICONS, NODE_TYPES } from "../constants/constants";
 
 export type CustomNodeProps = Node<
   {
@@ -14,9 +14,17 @@ export type CustomNodeProps = Node<
 const CustomNode: React.FC<NodeProps<CustomNodeProps>> = (props) => {
   const nodeType = getNodeType(props);
   const Icon = nodeType ? ICONS[nodeType] : null;
+  const isOption = [
+    NODE_TYPES.OPTIONS_NODE_1,
+    NODE_TYPES.OPTIONS_NODE_2,
+  ]?.includes(nodeType ?? "");
 
   return (
-    <div className="px-4 py-2 w-36 shadow-md rounded-md bg-white border-2 border-stone-400">
+    <div
+      className={`px-4 py-2 w-40  shadow-md ${
+        isOption ? "rounded-3xl" : "rounded-md"
+      }  bg-white border-2 border-stone-400`}
+    >
       <div className="flex items-center justify-start gap-1">
         {Icon && (
           <div>

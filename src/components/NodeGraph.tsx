@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import {
   ReactFlow,
   Background,
@@ -10,6 +10,7 @@ import {
   Edge,
   NodeChange,
   EdgeChange,
+  useReactFlow,
 } from "@xyflow/react";
 import { useMealData } from "../hooks/useMealData";
 import {
@@ -51,6 +52,11 @@ const NodeGraph: React.FC = () => {
   } = useMealData();
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>([]);
+  const { fitView } = useReactFlow();
+
+  const resetViewport = useCallback(() => {
+    fitView({ padding: 0.5, duration: 800 });
+  }, [fitView]);
 
   const onNodesChange = useCallback(
     (changes: NodeChange<Node>[]) =>
@@ -278,6 +284,12 @@ const NodeGraph: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (nodes.length > 0) {
+      resetViewport();
+    }
+  }, [nodes, resetViewport]);
+
   return (
     <div className="h-screen w-full">
       <ReactFlow
@@ -287,6 +299,7 @@ const NodeGraph: React.FC = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeClick={(_, node) => onNodeClick(node)}
+        // onInit={(instance) => setReactFlowInstance(instance)}
       >
         <Controls />
         <Background />
