@@ -2,6 +2,8 @@
 
 The Food Explorer App is a React-based application that allows users to explore various meal categories, view meals within those categories, and see detailed information about selected meals. The app utilizes a visual node graph to represent the exploration process, making it intuitive and engaging.
 
+![node-bites-social-media-preview-img](https://github.com/user-attachments/assets/2e4a84b2-a231-4521-9c5e-1c3233810639)
+
 ## Features
 
 - **Explore Meals:** Start from a central node and navigate through categories and meals.
