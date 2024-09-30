@@ -20,6 +20,34 @@ The Food Explorer App is a React-based application that allows users to explore 
 - **Vite:** For fast development and build tooling.
 - **Tailwind CSS:** For styling.
 
+## Folder Structure
+```
+src/
+│
+├── components/
+│   ├── NodeGraph.tsx
+│   ├── Sidebar.tsx
+│   └── CustomNode.tsx
+│
+├── api/
+│   ├── mealAPI.ts
+│
+├── hooks/
+│   └── useMealData.ts
+│
+├── utils/
+│   └── nodeUtils.ts
+│
+├── constants/
+│   └── constants.ts
+│ 
+├── tyeps/
+│   └── types.ts
+│
+├── App.tsx
+├── index.tsx
+└── main.tsx
+```
 ## Setup Instructions
 
 ### Prerequisites
