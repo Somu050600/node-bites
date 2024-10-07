@@ -18,8 +18,8 @@ const App = () => {
 
   return (
     <div className="relative border w-full h-[100vh] flex items-center justify-center">
-      <Grid />
-      {/* <MealContext.Provider value={{ country, mealDetails, setMealDetails }}>
+      {/* <Grid /> */}
+      <MealContext.Provider value={{ country, mealDetails, setMealDetails }}>
         <div className=" flex flex-row items-center justify-between absolute top-0 w-full shadow-md px-4 py-2 bg-white z-10 ">
           <span className=" text-xl font-medium">Food Explorer</span>
           <a
@@ -43,7 +43,7 @@ const App = () => {
           <NodeGraph />
         </ReactFlowProvider>
         {mealDetails && <Sidebar />}
-      </MealContext.Provider> */}
+      </MealContext.Provider>
     </div>
   );
 };
