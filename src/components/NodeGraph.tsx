@@ -23,7 +23,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import Spinner from "./Spinner";
 import CustomNode from "./CustomNode";
-import { getLevel } from "../utils/nodeUtils";
+import { getLevel, getNodesArrayIndex } from "../utils/nodeUtils";
 import { Node } from "../types/types";
 
 const initialNodes: Node[] = [
@@ -103,10 +103,24 @@ const NodeGraph: React.FC = () => {
   );
 
   // to remove entire sub-tree nodes
-  const removeSubtree = useCallback((level: number) => {
-    setNodes((nds) => nds.filter((node) => getLevel(node.id) <= level));
-    setEdges((eds) => eds.filter((edge) => getLevel(edge.id) < level));
-  }, []);
+  const removeSubtree = useCallback(
+    (level: number) => {
+      const arrayIndex = getNodesArrayIndex(nodes, level + 1);
+
+      if (arrayIndex >= 0) {
+        const remainingNodes = nodes.slice(0, arrayIndex);
+        const remainingEdges = edges.slice(0, arrayIndex);
+        // console.log("#", arrayIndex, remainingNodes);
+
+        // setNodes(remainingNodes);
+        // setEdges(remainingEdges);
+      }
+
+      setNodes((nds) => nds.filter((node) => getLevel(node.id) <= level));
+      setEdges((eds) => eds.filter((edge) => getLevel(edge.id) < level));
+    },
+    [edges, nodes]
+  );
 
   const getLoadingNodes = useCallback(
     (node: Node) => {
@@ -187,6 +201,8 @@ const NodeGraph: React.FC = () => {
 
     switch (nodeType) {
       case NODE_TYPES.START_NODE: {
+        removeSubtree(+level);
+
         categories.forEach((category, i) =>
           addNewNode(
             node,
@@ -205,7 +221,7 @@ const NodeGraph: React.FC = () => {
         addNewNode(
           node,
           getNewNode(
-            `${NODE_TYPES.OPTIONS_NODE_1}_${+level + 1}_${index}`,
+            `${NODE_TYPES.OPTIONS_NODE_1}_${+level + 1}_0`,
             { label: "View Meals", data: node?.data.data },
             { x: node.position.x + NODE_WIDTH, y: node.position.y }
           )

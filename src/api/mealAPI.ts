@@ -12,6 +12,13 @@ export const fetchMealsByCategory = async (category: string) => {
   return response.json();
 };
 
+export const fetchMealsByCountry = async (country: string) => {
+  const response = await fetch(
+    `https://www.themealdb.com/api/json/v1/1/filter.php?a=${country}`
+  );
+  return response.json();
+};
+
 export const fetchMealsByIngredient = async (ingredient: string) => {
   const response = await fetch(
     `https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingredient}`

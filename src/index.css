@@ -11,3 +11,9 @@
   font-family: "Poppins", sans-serif;
   font-style: normal;
 }
+
+.box-grid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 10px;
+}

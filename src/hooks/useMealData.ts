@@ -4,6 +4,7 @@ import {
   fetchMealsByCategory,
   fetchMealDetails,
   fetchMealsByIngredient,
+  fetchMealsByCountry,
 } from "../api/mealAPI";
 import { Category, Meal } from "../types/types";
 import { MealContext } from "../context/MealContext";
@@ -12,7 +13,7 @@ import { getIngredients } from "../utils/nodeUtils";
 export const useMealData = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { mealDetails, setMealDetails } = useContext(MealContext);
+  const { country, mealDetails, setMealDetails } = useContext(MealContext);
 
   useEffect(() => {
     const getCategories = async () => {
@@ -33,7 +34,12 @@ export const useMealData = () => {
   const getMealsByCategory = async (category: string) => {
     setIsLoading(true);
     try {
-      const data: { meals: Meal[] } = await fetchMealsByCategory(category);
+      let data;
+      if (country) {
+        data = await fetchMealsByCountry(country);
+      } else {
+        data = await fetchMealsByCategory(category);
+      }
       return data.meals.slice(0, 5);
     } catch (error) {
       console.error("Error fetching meals by category:", error);
